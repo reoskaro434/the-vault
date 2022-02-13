@@ -123,21 +123,42 @@ namespace Vault
 
         private void SaveData()
         {
+            LoadData();
+
             try
             {
                 using (var stream = File.Open(_vaultDataFilePath, FileMode.Append))
                 {
                     using (var writer = new BinaryWriter(stream, Encoding.UTF8, false))
                     {
-                        var data = "";
+                        DateTime fileAge = File.GetCreationTimeUtc(_vaultDataFilePath);
+
+                        int passLenght = 24;
+                        ClipboardService.SetText(
+                            (new Password(includeLowercase: true, includeUppercase: true, includeNumeric: true, includeSpecial: true)
+                            .LengthRequired(passLenght).Next()));
+
+                        Console.WriteLine($"Example password has been copied to the clipboard ({passLenght})");
 
                         Console.WriteLine("Insert key...");
-                        data += GetInput();
+                        
+                        var data = GetInput();
+
+                        data = data.Split(" ", StringSplitOptions.RemoveEmptyEntries)[0];
+
+                        data += ":";
+
+                        data += (int)DateTime.UtcNow.Subtract(fileAge).TotalSeconds;
 
                         data += ":";
 
                         Console.WriteLine("Insert data...");
-                        data += GetInput();
+
+                        var sensitiveData = GetInput();
+
+                        sensitiveData = sensitiveData.Split(" ", StringSplitOptions.RemoveEmptyEntries)[0];
+
+                        data += sensitiveData;
 
                         data = _rsa.Encrypt(data);
 
@@ -192,7 +213,9 @@ namespace Vault
             {
                 string[] entry = _rsa.Decrypt(chunk).Split(":", StringSplitOptions.RemoveEmptyEntries);
 
-                _secrets.Add(entry[0], entry[1]);
+                string key = $"{entry[0]} ({entry[1]})";
+
+                _secrets.Add(key, entry[2]);
             }
         }
 
