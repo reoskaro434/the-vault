@@ -19,12 +19,12 @@ namespace Vault
 
         private string _privateKeyPath;
 
-        public VaultRSAProvider(string directoryPath, int keySize)
+        public VaultRSAProvider(string directoryPath)
         {
-            _keySize = keySize;
             _directoryPath = directoryPath;
             _publicKeyPath = directoryPath + "\\vault_pub_key";
             _privateKeyPath = directoryPath + "\\vault_priv_key";
+            _keySize = 4096; //1024, 2048, 4096
 
             try
             {
@@ -43,8 +43,11 @@ namespace Vault
                 Console.WriteLine("Provide a valid shh keys if you want to use it to the following paths:");
                 Console.WriteLine(_publicKeyPath);
                 Console.WriteLine(_privateKeyPath);
-                Console.WriteLine("Auto generating a new key pair...");
+                Console.WriteLine("Close the program and start again or hit enter if you want to create a new key pair");
 
+                Console.ReadLine();
+
+                Console.WriteLine("Auto generating a new key pair...");
 
                 GenerateKeys();
             }
@@ -70,7 +73,7 @@ namespace Vault
 
         private void GenerateKeys()
         {
-            _csp = new RSACryptoServiceProvider(dwKeySize: _keySize);
+            _csp = new RSACryptoServiceProvider(_keySize);
 
             _stringPrivateKey = _csp.ToXmlString(true);
             _stringPublicKey = _csp.ToXmlString(false);

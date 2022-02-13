@@ -9,10 +9,8 @@ namespace Vault
         private string _input;
 
         private bool _end;
-
-        private string _mainPath;
-
-        private int _keySize;
+        
+        private string _drivePath;
 
         private string _vaultDataFilePath;
 
@@ -20,26 +18,28 @@ namespace Vault
 
         private SortedDictionary<string, string> _secrets;
 
+        private DriveHandler _driveHandler;
+
         public Core()
         {
             _end = false;
-            _mainPath = $"C:\\Users\\{Environment.UserName}\\.vault";
-            _vaultDataFilePath = $"{_mainPath}\\vault_data";
-            _keySize = 4096; //1024, 2048, 4096
-            _rsa = new VaultRSAProvider(_mainPath, _keySize);
+            _vaultDataFilePath = $"C:\\Users\\{Environment.UserName}\\.vault\\vault_data";
+            _driveHandler = new DriveHandler();
+            _drivePath = $"{_driveHandler.getDriveInfo().Name}\\Users\\{Environment.UserName}\\.vault";
+            _rsa = new VaultRSAProvider(_drivePath);
         }
 
         public void Execute()
-        {
+        { 
             Console.WriteLine("##################################################");
             Console.WriteLine("Welcome to the Vault, to list commands type \'help\'");
             Console.WriteLine("##################################################");
 
             while (!_end)
             {
-                _input = GetInput();
+                CheckInput();
 
-                _input = _input.Split(" " , StringSplitOptions.RemoveEmptyEntries)[0];
+                CheckDrive();
 
                 CheckCommand();
             }
@@ -53,6 +53,52 @@ namespace Vault
             return result == null ? "" : result;
         }
 
+        private void LoadData()
+        {
+            string data;
+
+            try
+            {
+                byte[] byteData = File.ReadAllBytes(_vaultDataFilePath);
+
+                data = Encoding.UTF8.GetString(byteData);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+
+                data = "";
+            }
+
+            string[] chunkedData = data.Split(":", StringSplitOptions.RemoveEmptyEntries);
+
+            _secrets = new SortedDictionary<string, string>();
+
+            foreach (string chunk in chunkedData)
+            {
+                string[] entry = _rsa.Decrypt(chunk).Split(":", StringSplitOptions.RemoveEmptyEntries);
+
+                string key = $"{entry[0]} ({entry[1]})";
+
+                _secrets.Add(key, entry[2]);
+            }
+        }
+        //Main loop
+        private void CheckInput()
+        {
+            _input = GetInput();
+
+            if (_input == "")
+                CheckInput();
+
+            _input = _input.Split(" ", StringSplitOptions.RemoveEmptyEntries)[0];
+        }
+        //Main loop
+        private void CheckDrive()
+        {
+            _driveHandler.scannForDrive();
+        }
+        //Main loop
         private void CheckCommand()
         {
             switch (_input)
@@ -95,12 +141,12 @@ namespace Vault
             }
             Console.WriteLine("\nDone!");
         }
-
+        //Command
         private void EndProgram()
         {
             _end = true;
         }
-
+        //Command
         private void GenerateData()
         {
             var pwd = new Password(includeLowercase: true, includeUppercase: true, includeNumeric: true, includeSpecial: true);
@@ -120,7 +166,7 @@ namespace Vault
             pwd.LengthRequired(48);
             Console.WriteLine(pwd.Next());
         }
-
+        //Command
         private void SaveData()
         {
             LoadData();
@@ -164,7 +210,7 @@ namespace Vault
 
                         data += ":";
 
-                        writer.Write(Encoding.ASCII.GetBytes(data));
+                        writer.Write(Encoding.UTF8.GetBytes(data));
                     }
                 }
             }
@@ -173,7 +219,7 @@ namespace Vault
                 Console.WriteLine(ex);
             }
         }
-
+        //Command
         private void Help()
         {
             Console.WriteLine("save - allows to save the data");
@@ -182,43 +228,12 @@ namespace Vault
             Console.WriteLine("list - shows all entries");
             Console.WriteLine("get - shows data associated with inserted key");
         }
-
+        //Command
         private void Default()
         {
             Console.WriteLine("Unknown command");
         }
-
-        private void LoadData()
-        {
-            string data;
-
-            try
-            {
-                byte[] byteData = File.ReadAllBytes(_vaultDataFilePath);
-
-                data = Encoding.ASCII.GetString(byteData);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.Message);
-
-                data = "";
-            }
-
-            string[] chunkedData = data.Split(":", StringSplitOptions.RemoveEmptyEntries);
-
-            _secrets = new SortedDictionary<string, string>();
-
-            foreach (string chunk in chunkedData)
-            {
-                string[] entry = _rsa.Decrypt(chunk).Split(":", StringSplitOptions.RemoveEmptyEntries);
-
-                string key = $"{entry[0]} ({entry[1]})";
-
-                _secrets.Add(key, entry[2]);
-            }
-        }
-
+        //Command
         private void ListData()
         {
             LoadData();
@@ -228,7 +243,7 @@ namespace Vault
                 Console.WriteLine(entry.Key);
             }
         }
-
+        //Command
         private void GetData()
         {
             LoadData();
