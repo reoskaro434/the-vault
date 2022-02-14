@@ -1,21 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Vault.models
+﻿namespace Vault.models
 {
     class Entry
     {
         public string Data { get; set; }
         public string Key { get; set; }
-        public DateTime CreationTime { get; set; }
-        public Entry(string data, string key, DateTime creationTime)
+        public int Timestamp { get; set; }
+        public Entry(string data, string key, int timestamp)
         {
             Data = data;
+            Timestamp = timestamp;
             Key = key;
-            CreationTime = creationTime;
         }
 
     }

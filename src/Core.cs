@@ -1,6 +1,7 @@
 ﻿using PasswordGenerator;
 using TextCopy;
 using Vault.models;
+using Vault.src;
 
 namespace Vault
 {
@@ -9,16 +10,16 @@ namespace Vault
         private string _input;
         private bool _end;
         private string _vaultDataFilePath;
-        private List<Entry> _entries;
         private FileManager _fileManager;
+        private EntryManager _entryManager;
 
         public Core()
         {
             _end = false;
             _input = "";
-            _entries = new List<Entry>();
             _vaultDataFilePath = $"C:\\Users\\{Environment.UserName}\\.vault\\vault_data";
             _fileManager = new FileManager();
+            _entryManager = new EntryManager();
         }
 
         public void Execute()
@@ -27,7 +28,7 @@ namespace Vault
             ConsoleManager.ShowMessage("Welcome to the Vault, to list commands type \'help\'");
             ConsoleManager.ShowMessage("##################################################");
 
-            _entries = _fileManager.LoadEntries(_vaultDataFilePath);
+            _entryManager.AddEntryList(_fileManager.LoadEntries(_vaultDataFilePath));
 
             while (!_end)
             {
@@ -107,29 +108,25 @@ namespace Vault
 
         private void SaveData()
         {
-             int passLenght = 24;
-
+            int passLenght = 24;
             ClipboardService.SetText(
                (new Password(includeLowercase: true, includeUppercase: true, includeNumeric: true, includeSpecial: true)
                 .LengthRequired(passLenght).Next()));
 
             ConsoleManager.ShowMessage($"Example password has been copied to the clipboard ({passLenght})");
-
             ConsoleManager.ShowMessage("Insert key...");
-
-            var key = ConsoleManager.GetInput();
+            var key = ConsoleManager.GetInput().ToLower();
 
             ConsoleManager.ShowMessage("Insert data...");
-
             var data = ConsoleManager.GetInput();
 
-            var time = DateTime.Now;
+            int timestamp = (int)DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1)).TotalSeconds;
 
-            Entry entry = new(data, key, time);
+            Entry entry = new(data, key, timestamp);
 
             _fileManager.SaveEntry(_vaultDataFilePath, entry);
 
-            _entries.Add(entry);
+            _entryManager.AddEntry(entry);
         }
 
         private void Help()
@@ -148,7 +145,7 @@ namespace Vault
 
         private void ListData()
         {
-            foreach (var entry in _entries)
+            foreach (var entry in _entryManager.GetEntryList())
             {
                 ConsoleManager.ShowMessage(entry.Key);
             }
@@ -160,7 +157,7 @@ namespace Vault
 
             string text = ConsoleManager.GetInput();
 
-            List<Entry> entries = new List<Entry>(_entries.Where(x => x.Key.Contains(text, StringComparison.OrdinalIgnoreCase)));
+            List<ComplexEntry> entries = new List<ComplexEntry>(_entryManager.GetEntryList().Where(x => x.Key.Contains(text, StringComparison.OrdinalIgnoreCase)));
 
             if (entries.Count > 1)
             {
@@ -175,14 +172,22 @@ namespace Vault
             {
                 foreach (var entry in entries)
                 {
-                    ClipboardService.SetText(entry.Data);
-                    ConsoleManager.ShowMessage($"Value from {entry.Key} saved in clipboard");
+                    
+                    ClipboardService.SetText(entry.Data[entry.Data.Count - 1]);
+                    ConsoleManager.ShowMessage($"Newest value from {entry.Key} saved in clipboard");
                     ConsoleManager.ShowMessage($"To show sensitve data type: {entry.Key}");
 
                     string input = ConsoleManager.GetInput();
 
                     if (input == entry.Key)
-                        ConsoleManager.ShowMessage($"{entry.Key} : {entry.Data}");
+                    {
+                        for (int i = 0; i < entry.Data.Count; i++)
+                        {
+                            DateTime dateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
+                            dateTime = dateTime.AddSeconds(entry.Timestamp[i]).ToLocalTime();
+                            ConsoleManager.ShowMessage($"{i+1}.{entry.Key} : {entry.Data[i]} : {dateTime}");
+                        }
+                    }
                 }
             }
             else

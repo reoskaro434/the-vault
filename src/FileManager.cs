@@ -63,7 +63,8 @@ namespace Vault
 
             foreach (string chunk in chunkedData)
             {
-                Entry? entry = JsonConvert.DeserializeObject<Entry>(_rsa.Decrypt(chunk));
+                var xd = _rsa.Decrypt(chunk);
+                Entry? entry = JsonConvert.DeserializeObject<Entry>(xd);
 
                 if (entry != null)
                     entries.Add(entry);
