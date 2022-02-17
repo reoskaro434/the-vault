@@ -18,3 +18,5 @@ C:\Users\reosk\Documents\projects\the-vault\obj\Debug\net6.0\ref\Vault.dll
 C:\Users\reosk\Documents\projects\the-vault\obj\Debug\net6.0\Vault.pdb
 C:\Users\reosk\Documents\projects\the-vault\obj\Debug\net6.0\Vault.genruntimeconfig.cache
 C:\Users\reosk\Documents\projects\the-vault\bin\Debug\net6.0\Newtonsoft.Json.dll
+C:\Users\reosk\Documents\projects\the-vault\bin\Debug\net6.0\AWSSDK.Core.dll
+C:\Users\reosk\Documents\projects\the-vault\bin\Debug\net6.0\AWSSDK.S3.dll

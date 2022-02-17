@@ -12,6 +12,7 @@ namespace Vault
         private string _vaultDataFilePath;
         private FileManager _fileManager;
         private EntryManager _entryManager;
+        private S3Provider _s3;
 
         public Core()
         {
@@ -20,6 +21,8 @@ namespace Vault
             _vaultDataFilePath = $"C:\\Users\\{Environment.UserName}\\.vault\\vault_data";
             _fileManager = new FileManager();
             _entryManager = new EntryManager();
+            _s3 = new S3Provider(_vaultDataFilePath, "vault-data");
+            _s3.LoadData();
         }
 
         public void Execute()
@@ -125,6 +128,8 @@ namespace Vault
             Entry entry = new(data, key, timestamp);
 
             _fileManager.SaveEntry(_vaultDataFilePath, entry);
+
+            _s3.SaveData();
 
             _entryManager.AddEntry(entry);
         }

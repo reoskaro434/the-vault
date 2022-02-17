@@ -8,12 +8,32 @@
     ".NETCoreApp,Version=v6.0": {
       "Vault/1.0.0": {
         "dependencies": {
+          "AWSSDK.S3": "3.7.7.21",
           "Newtonsoft.Json": "13.0.1",
           "PasswordGenerator": "2.1.0",
           "TextCopy": "6.1.0"
         },
         "runtime": {
           "Vault.dll": {}
+        }
+      },
+      "AWSSDK.Core/3.7.7": {
+        "runtime": {
+          "lib/netcoreapp3.1/AWSSDK.Core.dll": {
+            "assemblyVersion": "3.3.0.0",
+            "fileVersion": "3.7.7.0"
+          }
+        }
+      },
+      "AWSSDK.S3/3.7.7.21": {
+        "dependencies": {
+          "AWSSDK.Core": "3.7.7"
+        },
+        "runtime": {
+          "lib/netcoreapp3.1/AWSSDK.S3.dll": {
+            "assemblyVersion": "3.3.0.0",
+            "fileVersion": "3.7.7.21"
+          }
         }
       },
       "Microsoft.Extensions.DependencyInjection.Abstractions/6.0.0": {
@@ -58,6 +78,20 @@
       "type": "project",
       "serviceable": false,
       "sha512": ""
+    },
+    "AWSSDK.Core/3.7.7": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-oa2AMh0Fk5uQVfq5NR2P5WMqpzb7pY8rd94MUQ5vG8NUygpw1KfwX0h8jSYvhXy5lXagg2qQ+M/zNkDIAY5Lnw==",
+      "path": "awssdk.core/3.7.7",
+      "hashPath": "awssdk.core.3.7.7.nupkg.sha512"
+    },
+    "AWSSDK.S3/3.7.7.21": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-imWi9mxESS47whvrhJWxt+KHyuS9ZSOZ1fsmQgGw+j8j4PeeN6N2lOcMuHBN5lPorbqmsV2JZ3UNp17gnrXPXA==",
+      "path": "awssdk.s3/3.7.7.21",
+      "hashPath": "awssdk.s3.3.7.7.21.nupkg.sha512"
     },
     "Microsoft.Extensions.DependencyInjection.Abstractions/6.0.0": {
       "type": "package",

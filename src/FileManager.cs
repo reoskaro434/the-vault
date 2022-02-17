@@ -12,12 +12,13 @@ namespace Vault
         public FileManager()
         {
             _driveHandler = new DriveHandler();
-            _rsa = new VaultRSAProvider($"{_driveHandler.getDriveInfo().Name}\\Users\\{Environment.UserName}\\.vault");
+            //_rsa = new VaultRSAProvider($"{_driveHandler.getDriveInfo().Name}\\Users\\{Environment.UserName}\\.vault");
+            _rsa = new VaultRSAProvider($"C:\\Users\\{Environment.UserName}\\.vault");
         }
 
         public void SaveEntry(string filePath, Entry entry)
         {
-            _driveHandler.scannForDrive();
+            //_driveHandler.scannForDrive();
 
             try
             {
@@ -40,7 +41,7 @@ namespace Vault
 
         public List<Entry> LoadEntries(string filePath)
         {
-            _driveHandler.scannForDrive();
+            //_driveHandler.scannForDrive();
 
             string data;
 
