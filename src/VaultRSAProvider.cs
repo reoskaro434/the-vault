@@ -6,8 +6,8 @@ namespace Vault
     class VaultRSAProvider
     {
         private static RSACryptoServiceProvider ?_csp;
-        private string ?_stringPublicKey;
-        private string ?_stringPrivateKey;
+        private string _stringPublicKey;
+        private string _stringPrivateKey;
         private string _directoryPath;
         private string _publicKeyPath;
         private string _privateKeyPath;
@@ -18,8 +18,9 @@ namespace Vault
             _directoryPath = directoryPath;
             _publicKeyPath = directoryPath + "\\vault_pub_key";
             _privateKeyPath = directoryPath + "\\vault_priv_key";
-            _keySize = 4096; //1024, 2048, 4096
-
+            _keySize = 8192; //1024, 2048, 4096, 8192
+            _stringPrivateKey = "";
+            _stringPublicKey = "";
             try
             {
                 string publicKey = File.ReadAllText(_publicKeyPath);
@@ -28,7 +29,7 @@ namespace Vault
                 _stringPublicKey = publicKey;
                 _stringPrivateKey = privateKey;
 
-                ConsoleManager.ShowMessage("The Vault credentials obtained from the files\n");
+                ConsoleManager.ShowMessage("The Vault credentials has been obtained\n");
             } catch (Exception ex)
             {
                 ConsoleManager.ShowMessage(ex.Message);

@@ -13,7 +13,8 @@
     <SourceRoot Include="C:\Users\reosk\.nuget\packages\" />
   </ItemGroup>
   <PropertyGroup Condition=" '$(ExcludeRestorePackageImports)' != 'true' ">
-    <PkgAWSSDK_Core Condition=" '$(PkgAWSSDK_Core)' == '' ">C:\Users\reosk\.nuget\packages\awssdk.core\3.7.7</PkgAWSSDK_Core>
-    <PkgAWSSDK_S3 Condition=" '$(PkgAWSSDK_S3)' == '' ">C:\Users\reosk\.nuget\packages\awssdk.s3\3.7.7.21</PkgAWSSDK_S3>
+    <PkgAWSSDK_Core Condition=" '$(PkgAWSSDK_Core)' == '' ">C:\Users\reosk\.nuget\packages\awssdk.core\3.7.8.2</PkgAWSSDK_Core>
+    <PkgAWSSDK_S3 Condition=" '$(PkgAWSSDK_S3)' == '' ">C:\Users\reosk\.nuget\packages\awssdk.s3\3.7.8</PkgAWSSDK_S3>
+    <PkgAWSSDK_IdentityManagement Condition=" '$(PkgAWSSDK_IdentityManagement)' == '' ">C:\Users\reosk\.nuget\packages\awssdk.identitymanagement\3.7.2.108</PkgAWSSDK_IdentityManagement>
   </PropertyGroup>
 </Project>

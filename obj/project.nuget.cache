@@ -1,11 +1,12 @@
 {
   "version": 2,
-  "dgSpecHash": "uEVWOauTC1QA8SR1xG+DP4whnq8BTB/QsK/cLS0ZN9VZkYiP/m8F8w1c+JU17Wy6ROpMtxfJg4Rp7Q1iN1nOvw==",
+  "dgSpecHash": "G3yk11xedPOHDGBJROzmzUUMDxQAV4En71NQicijM0Iitm2Z5y3/1qZ9hDCb2LqoW7Kv/AOVuxlZwJbqcRYZpw==",
   "success": true,
   "projectFilePath": "C:\\Users\\reosk\\Documents\\projects\\the-vault\\Vault.csproj",
   "expectedPackageFiles": [
-    "C:\\Users\\reosk\\.nuget\\packages\\awssdk.core\\3.7.7\\awssdk.core.3.7.7.nupkg.sha512",
-    "C:\\Users\\reosk\\.nuget\\packages\\awssdk.s3\\3.7.7.21\\awssdk.s3.3.7.7.21.nupkg.sha512",
+    "C:\\Users\\reosk\\.nuget\\packages\\awssdk.core\\3.7.8.2\\awssdk.core.3.7.8.2.nupkg.sha512",
+    "C:\\Users\\reosk\\.nuget\\packages\\awssdk.identitymanagement\\3.7.2.108\\awssdk.identitymanagement.3.7.2.108.nupkg.sha512",
+    "C:\\Users\\reosk\\.nuget\\packages\\awssdk.s3\\3.7.8\\awssdk.s3.3.7.8.nupkg.sha512",
     "C:\\Users\\reosk\\.nuget\\packages\\microsoft.extensions.dependencyinjection.abstractions\\6.0.0\\microsoft.extensions.dependencyinjection.abstractions.6.0.0.nupkg.sha512",
     "C:\\Users\\reosk\\.nuget\\packages\\newtonsoft.json\\13.0.1\\newtonsoft.json.13.0.1.nupkg.sha512",
     "C:\\Users\\reosk\\.nuget\\packages\\passwordgenerator\\2.1.0\\passwordgenerator.2.1.0.nupkg.sha512",

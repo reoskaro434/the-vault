@@ -1,15 +1,11 @@
 ﻿using Amazon.S3;
 using Amazon.S3.Model;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Vault.src
 {
     class S3Provider
     {
+        string _bucketName = "the-v-storage";
         private AmazonS3Client _client;
         private string _filePath;
         private string _fileName;
@@ -26,8 +22,8 @@ namespace Vault.src
         {
             var request = new PutObjectRequest()
             {
-                BucketName = "vault-data-storage",
-                Key = "vault-data",
+                BucketName = _bucketName,
+                Key = _fileName,
                 FilePath = _filePath
             };
             try
@@ -47,13 +43,17 @@ namespace Vault.src
         {
             try
             {
-
-             GetObjectResponse response = _client.GetObjectAsync("vault-data-storage", _fileName).GetAwaiter().GetResult();
+                var request = new GetObjectRequest()
+                {
+                    BucketName = _bucketName,
+                    Key = _fileName
+                };
+                GetObjectResponse response = _client.GetObjectAsync(request).GetAwaiter().GetResult();
                 MemoryStream ms = new MemoryStream();
-             using (Stream stream = response.ResponseStream)
+                using (Stream stream = response.ResponseStream)
                 {
                     stream.CopyTo(ms);
-      
+
                 }
 
                 File.WriteAllBytes(_filePath, ms.ToArray());
@@ -61,6 +61,7 @@ namespace Vault.src
             }
             catch (Exception ex)
             {
+                ConsoleManager.ShowMessage("Cannot download a specified file");
                 ConsoleManager.ShowMessage(ex.Message);
                 return false;
             }

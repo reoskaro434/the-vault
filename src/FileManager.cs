@@ -7,19 +7,14 @@ namespace Vault
     class FileManager
     {
         private VaultRSAProvider _rsa;
-        private DriveHandler _driveHandler;
 
         public FileManager()
         {
-            _driveHandler = new DriveHandler();
-            //_rsa = new VaultRSAProvider($"{_driveHandler.getDriveInfo().Name}\\Users\\{Environment.UserName}\\.vault");
             _rsa = new VaultRSAProvider($"C:\\Users\\{Environment.UserName}\\.vault");
         }
 
         public void SaveEntry(string filePath, Entry entry)
         {
-            //_driveHandler.scannForDrive();
-
             try
             {
                 using (var stream = File.Open(filePath, FileMode.Append))
@@ -41,8 +36,6 @@ namespace Vault
 
         public List<Entry> LoadEntries(string filePath)
         {
-            //_driveHandler.scannForDrive();
-
             string data;
 
             try

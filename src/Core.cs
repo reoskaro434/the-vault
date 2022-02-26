@@ -2,6 +2,7 @@
 using TextCopy;
 using Vault.models;
 using Vault.src;
+using Amazon.IdentityManagement;
 
 namespace Vault
 {
@@ -10,18 +11,23 @@ namespace Vault
         private string _input;
         private bool _end;
         private string _vaultDataFilePath;
+        private string _fileName;
         private FileManager _fileManager;
         private EntryManager _entryManager;
         private S3Provider _s3;
+        private AmazonIdentityManagementServiceClient _iam;
 
         public Core()
         {
+            _iam = new AmazonIdentityManagementServiceClient(region: Amazon.RegionEndpoint.EUCentral1);
+            _fileName = $"{_iam.GetUserAsync().Result.User.UserId}-VAULT";
             _end = false;
             _input = "";
-            _vaultDataFilePath = $"C:\\Users\\{Environment.UserName}\\.vault\\vault_data";
+            _vaultDataFilePath = $"C:\\Users\\{Environment.UserName}\\.vault\\{_fileName}";
             _fileManager = new FileManager();
             _entryManager = new EntryManager();
-            _s3 = new S3Provider(_vaultDataFilePath, "vault-data");
+            _s3 = new S3Provider(_vaultDataFilePath, _fileName);
+
             _s3.LoadData();
         }
 
@@ -111,7 +117,7 @@ namespace Vault
 
         private void SaveData()
         {
-            int passLenght = 24;
+            int passLenght = 12;
             ClipboardService.SetText(
                (new Password(includeLowercase: true, includeUppercase: true, includeNumeric: true, includeSpecial: true)
                 .LengthRequired(passLenght).Next()));
@@ -164,8 +170,33 @@ namespace Vault
 
             List<ComplexEntry> entries = new List<ComplexEntry>(_entryManager.GetEntryList().Where(x => x.Key.Contains(text, StringComparison.OrdinalIgnoreCase)));
 
+
+
             if (entries.Count > 1)
             {
+                foreach (var entry in entries)
+                {
+                    if (entry.Key == text)
+                    {
+                        ClipboardService.SetText(entry.Data[entry.Data.Count - 1]);
+                        ConsoleManager.ShowMessage($"Newest value from {entry.Key} saved in clipboard");
+                        ConsoleManager.ShowMessage($"To show sensitve data type: {entry.Key}");
+
+                        string input = ConsoleManager.GetInput();
+
+                        if (input == entry.Key)
+                        {
+                            for (int i = 0; i < entry.Data.Count; i++)
+                            {
+                                DateTime dateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
+                                dateTime = dateTime.AddSeconds(entry.Timestamp[i]).ToLocalTime();
+                                ConsoleManager.ShowMessage($"{i + 1}.{entry.Key} : {entry.Data[i]} : {dateTime}");
+                            }
+                            return;
+                        }
+                    }
+                }
+
                 ConsoleManager.ShowMessage("Your input is associated with more than one key");
 
                 foreach (var entry in entries)
@@ -176,8 +207,7 @@ namespace Vault
             else if (entries.Count == 1)
             {
                 foreach (var entry in entries)
-                {
-                    
+                {          
                     ClipboardService.SetText(entry.Data[entry.Data.Count - 1]);
                     ConsoleManager.ShowMessage($"Newest value from {entry.Key} saved in clipboard");
                     ConsoleManager.ShowMessage($"To show sensitve data type: {entry.Key}");
