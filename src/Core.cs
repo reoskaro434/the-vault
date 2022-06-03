@@ -3,6 +3,8 @@ using TextCopy;
 using Vault.models;
 using Vault.src;
 using Amazon.IdentityManagement;
+using Amazon.Runtime;
+using Amazon.Runtime.CredentialManagement;
 
 namespace Vault
 {
@@ -19,14 +21,21 @@ namespace Vault
 
         public Core()
         {
-            _iam = new AmazonIdentityManagementServiceClient(region: Amazon.RegionEndpoint.EUCentral1);
+          
+            AWSCredentials awsCredentials;
+            if (!new CredentialProfileStoreChain().TryGetAWSCredentials("vault", out awsCredentials))
+            {
+                Console.WriteLine($"Cannot find vault credentials in the aws credentials file...");
+                throw new Exception("Cannot find vault credentials in the aws credentials file...");
+            }
+            _iam = new AmazonIdentityManagementServiceClient(credentials: awsCredentials, region: Amazon.RegionEndpoint.EUCentral1);
             _fileName = $"{_iam.GetUserAsync().Result.User.UserId}-VAULT";
             _end = false;
             _input = "";
             _vaultDataFilePath = $"C:\\Users\\{Environment.UserName}\\.vault\\{_fileName}";
             _fileManager = new FileManager();
             _entryManager = new EntryManager();
-            _s3 = new S3Provider(_vaultDataFilePath, _fileName);
+            _s3 = new S3Provider(_vaultDataFilePath, _fileName, awsCredentials);
 
             _s3.LoadData();
         }

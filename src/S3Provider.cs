@@ -1,4 +1,5 @@
-﻿using Amazon.S3;
+﻿using Amazon.Runtime;
+using Amazon.S3;
 using Amazon.S3.Model;
 
 namespace Vault.src
@@ -11,9 +12,9 @@ namespace Vault.src
         private string _fileName;
 
 
-        public S3Provider(string filePath, string fileName)
+        public S3Provider(string filePath, string fileName, AWSCredentials credentials)
         {
-            _client = new AmazonS3Client(region: Amazon.RegionEndpoint.EUCentral1);
+            _client = new AmazonS3Client(credentials: credentials, region: Amazon.RegionEndpoint.EUCentral1);
             _fileName = fileName;
             _filePath = filePath;
         }
